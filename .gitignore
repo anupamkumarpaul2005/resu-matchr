@@ -1,0 +1,7 @@
+\resum-env
+.env
+temp_resume.pdf
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
