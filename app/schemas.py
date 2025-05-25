@@ -2,9 +2,6 @@ from pydantic import BaseModel, HttpUrl, EmailStr
 from typing import Optional, List
 from datetime import datetime
 
-class JobIDInput(BaseModel):
-    job_id: int
-    
 class ResumeTextInput(BaseModel):
     resume_text: str
 
@@ -46,3 +43,6 @@ class JobResponse(BaseModel):
     application_link: HttpUrl
     hiring_manager_email: EmailStr
     expires_on: datetime
+
+    class Config:
+        orm_mode = True

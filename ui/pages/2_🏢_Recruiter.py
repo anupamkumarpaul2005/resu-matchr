@@ -39,7 +39,7 @@ with st.form("job_form"):
                 "expires_on": deadline.isoformat(),
             }
             try:
-                resp = requests.post("http://localhost:8000/upload_job", data=payload)
+                resp = requests.post("http://localhost:8000/job/upload", data=payload)
                 resp.raise_for_status()
                 st.success(f"Job posted! ID: {resp.json().get('job_id')}")
             except Exception as e:

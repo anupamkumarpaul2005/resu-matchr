@@ -11,8 +11,8 @@ class Job(Base):
     company_name = Column(Text, nullable=False)
     location = Column(Text, nullable=False)
     description = Column(Text, nullable=False)
-    skills = Column(Text, nullable=False)  # Comma-separated string
-    job_type = Column(String(50), nullable=False)  # e.g., Full-time, Remote
+    skills = Column(Text, nullable=False)
+    job_type = Column(String(50), nullable=False)
     experience_level = Column(String(50), nullable=False)
     salary_min = Column(Integer, nullable=False)
     salary_max = Column(Integer, nullable=False)

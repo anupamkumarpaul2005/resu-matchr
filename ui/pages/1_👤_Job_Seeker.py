@@ -23,7 +23,7 @@ with col2:
         if uploaded_resume:
             try:
                 resp = requests.post(
-                    "http://localhost:8000/upload_resume",
+                    "http://localhost:8000/resume/upload",
                     files={"file": (uploaded_resume.name, uploaded_resume, "application/pdf")}
                 )
                 resp.raise_for_status()
@@ -51,7 +51,7 @@ if st.session_state.feedback_requested:
     with st.spinner("Analyzing your resume..."):
         try:
             resp = requests.post(
-                "http://localhost:8000/resume_feedback",
+                "http://localhost:8000/resume/feedback",
                 json={"resume_text": st.session_state.resume_text}
             )
             resp.raise_for_status()
@@ -73,7 +73,7 @@ if st.session_state.match_requested:
     with st.spinner("Matching your resume with jobs..."):
         try:
             resp = requests.post(
-                "http://localhost:8000/match_jobs_with_feedback",
+                "http://localhost:8000/resume/match",
                 json={"resume_text": st.session_state.resume_text}
             )
             resp.raise_for_status()
@@ -83,9 +83,8 @@ if st.session_state.match_requested:
             if not matches:
                 st.info("No matches found.")
             for match in matches:
-                job = requests.post(
-                    "http://localhost:8000/get_job_details",
-                    json={"job_id": match["job_id"]}
+                job = requests.get(
+                    f"http://localhost:8000/job/details?job_id={match['job_id']}"
                 ).json()
 
                 st.markdown(f"### {job['title']} — {job['company_name']}  ")
