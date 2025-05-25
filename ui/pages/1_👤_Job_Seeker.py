@@ -11,11 +11,6 @@ for key, default in {
     if key not in st.session_state:
         st.session_state[key] = default
 
-# Sidebar navigation
-st.sidebar.page_link("home.py", label="🏠 Home")
-st.sidebar.page_link("pages/1_User.py", label="👤 User", icon="📄")
-st.sidebar.page_link("pages/2_Recruiter.py", label="🏢 Recruiter", icon="📢")
-
 st.header("📄 Upload Your Resume")
 
 # Upload resume

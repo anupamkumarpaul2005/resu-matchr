@@ -2,11 +2,6 @@ import streamlit as st
 from datetime import datetime, timedelta
 import requests
 
-# Sidebar navigation
-st.sidebar.page_link("Home.py", label="🏠 Home")
-st.sidebar.page_link("pages/1_User.py", label="👤 User", icon="📄")
-st.sidebar.page_link("pages/2_Recruiter.py", label="🏢 Recruiter", icon="📢")
-
 st.header("📢 Post a Job Opening")
 
 with st.form("job_form"):
