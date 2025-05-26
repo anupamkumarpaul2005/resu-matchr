@@ -35,7 +35,6 @@ def get_predicted_roles(resume_text: str) -> List[RoleConfidence]:
 def get_resume_feedback(resume_text: str) -> List[Feedback]:
     prompt = FEEDBACK_PROMPT.format(resume_text=resume_text)
     response = call_ollama(prompt)
-    print(response)
     try:
         output = response.strip()
         start = output.find('[')
@@ -57,7 +56,6 @@ def get_job_match(resume_text: str, job: Job) -> Dict:
         job_keywords=job.keywords
     )
     response = call_ollama(prompt)
-    print(response)
     try:
         output = response.strip()
         start = output.find('{')

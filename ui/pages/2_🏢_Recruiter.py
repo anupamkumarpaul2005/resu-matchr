@@ -2,6 +2,8 @@ import streamlit as st
 from datetime import datetime, timedelta
 import requests
 
+st.set_page_config(page_title="ResuMatchr", layout="centered")
+
 st.header("📢 Post a Job Opening")
 
 with st.form("job_form"):

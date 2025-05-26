@@ -1,26 +1,32 @@
 import streamlit as st
 import requests
 
-# Session state initialization
-for key, default in {
+st.set_page_config(page_title="ResuMatchr", layout="centered")
+
+default_states = {
     "resume_uploaded": False,
     "resume_text": "",
-    "feedback_requested": False,
-    "match_requested": False
-}.items():
+    "actions_triggered": False,
+    "last_resume": None
+}
+for key, value in default_states.items():
     if key not in st.session_state:
-        st.session_state[key] = default
+        st.session_state[key] = value
 
 st.header("📄 Upload Your Resume")
 
-# Upload resume
-col1, col2 = st.columns(2)
-with col1:
-    uploaded_resume = st.file_uploader("Upload Resume PDF", type=["pdf"])
-with col2:
-    disabled = uploaded_resume is None
-    if st.button("📤 Upload Resume", disabled=disabled):
-        if uploaded_resume:
+uploaded_resume = st.file_uploader("Upload Resume PDF", type=["pdf"])
+
+upload_btn = st.button("📤 Upload & Analyze Resume", disabled=uploaded_resume is None)
+
+if uploaded_resume != st.session_state.last_resume:
+    for key in default_states:
+        st.session_state[key] = default_states[key]
+    st.session_state.last_resume = uploaded_resume
+
+if upload_btn:
+    if uploaded_resume:
+        with st.spinner("🔍 Extracting text from resume..."):
             try:
                 resp = requests.post(
                     "http://localhost:8000/resume/upload",
@@ -29,57 +35,54 @@ with col2:
                 resp.raise_for_status()
                 st.session_state.resume_uploaded = True
                 st.session_state.resume_text = resp.json().get("resume_text", "")
+                st.session_state.actions_triggered = True
             except Exception as e:
-                st.error(f"Upload failed: {e}")
+                st.error(f"❌ Extraction failed: {e}")
+    else:
+        st.warning("Please upload a PDF file.")
 
-# Show resume text & actions
+if not uploaded_resume:
+    for key in default_states:
+        st.session_state[key] = default_states[key]
+
 if st.session_state.resume_uploaded:
-    st.subheader("Extracted Resume Text")
-    with st.expander("View Resume Text"):
-        st.text(st.session_state.resume_text[:3000])
+    st.subheader("📝 Extracted Resume Text")
+    with st.expander("📄 View Resume Text"):
+        st.text(st.session_state.resume_text[:3000])  # Limit for preview
 
-    b1, b2 = st.columns(2)
-    with b1:
-        if st.button("🛠️ Get Resume Feedback"):
-            st.session_state.feedback_requested = True
-    with b2:
-        if st.button("🔍 Match with Jobs"):
-            st.session_state.match_requested = True
-
-# Resume feedback
-if st.session_state.feedback_requested:
-    with st.spinner("Analyzing your resume..."):
+if st.session_state.actions_triggered:
+    
+    with st.spinner("⚙️ Generating feedback..."):
         try:
-            resp = requests.post(
+            feedback_resp = requests.post(
                 "http://localhost:8000/resume/feedback",
                 json={"resume_text": st.session_state.resume_text}
             )
-            resp.raise_for_status()
-            data = resp.json()
+            feedback_resp.raise_for_status()
+            feedback_data = feedback_resp.json()
 
-            st.subheader("🔍 Predicted Job Roles")
-            for item in data["roles"]:
-                st.markdown(f"- **{item['role']}** ({item['confidence']:.0%})")
+            st.subheader("🛠️ Resume Feedback")
 
-            st.subheader("🛠️ Resume Improvement Suggestions")
-            for sugg in data["feedback"]:
+            st.markdown("**🎯 Predicted Job Roles:**")
+            for role in feedback_data["roles"]:
+                st.markdown(f"- **{role['role']}** ({role['confidence']:.0%})")
+
+            st.markdown("**🔧 Improvement Suggestions:**")
+            for sugg in feedback_data["feedback"]:
                 st.markdown(f"- **{sugg['category']}:** {sugg['feedback']}")
-
         except Exception as e:
-            st.error(f"Feedback request failed: {e}")
+            st.error(f"🚨 Analysis failed: {e}")
 
-# Job matches
-if st.session_state.match_requested:
-    with st.spinner("Matching your resume with jobs..."):
+    with st.spinner("🔍 Matching with jobs..."):
         try:
-            resp = requests.post(
+            match_resp = requests.post(
                 "http://localhost:8000/resume/match",
                 json={"resume_text": st.session_state.resume_text}
             )
-            resp.raise_for_status()
-            matches = resp.json().get("matches", [])
+            match_resp.raise_for_status()
+            matches = match_resp.json().get("matches", [])
 
-            st.subheader("🔍 Top Job Matches")
+            st.subheader("📌 Top Job Matches")
             if not matches:
                 st.info("No matches found.")
             for match in matches:
@@ -87,23 +90,23 @@ if st.session_state.match_requested:
                     f"http://localhost:8000/job/details?job_id={match['job_id']}"
                 ).json()
 
-                st.markdown(f"### {job['title']} — {job['company_name']}  ")
-                st.write(f"**Faiss Score:** {match['faiss_score']:.4f}  ")
-                st.write(f"**LLM Score:** {match['llm_score']}  ")
-                st.write(f"**Missing Skills:** {', '.join(match['missing_skills']) or 'None'}  ")
-                st.write(f"**Feedback:** {match['feedback']}  ")
+                st.markdown(f"### 💼 {job['title']} — {job['company_name']}")
+                st.write(f"**Faiss Score:** {match['faiss_score']:.4f}")
+                st.write(f"**LLM Score:** {match['llm_score']}")
+                st.write(f"**Missing Skills:** {', '.join(match['missing_skills']) or 'None'}")
+                st.write(f"**Feedback:** {match['feedback']}")
 
-                with st.expander("More Details"):
+                with st.expander("📋 Job Details"):
                     st.write(f"- **Location:** {job['location']}")
                     st.write(f"- **Type:** {job['job_type']}")
                     st.write(f"- **Experience:** {job['experience_level']}")
-                    st.write(f"- **Industry:** {job.get('industry','—')}")
+                    st.write(f"- **Industry:** {job.get('industry', '—')}")
                     st.write(f"- **Salary:** ₹{job['salary_min']:,}–₹{job['salary_max']:,}")
-                    st.write(f"- **Apply:** [Link]({job['application_link']})")
-                    st.write(f"- **Expires on:** {job['expires_on']}")
-                    st.write("**Description:**")
+                    st.write(f"- **Apply:** [Application Link]({job['application_link']})")
+                    st.write(f"- **Expires On:** {job['expires_on']}")
+                    st.write("**Job Description:**")
                     st.write(job["description"])
                 st.markdown("---")
 
         except Exception as e:
-            st.error(f"Match request failed: {e}")
+            st.error(f"🚨 Matching failed: {e}")
