@@ -7,7 +7,7 @@ from app.crud import get_job
 from app.models import Job
 
 # --- Globals ---
-model = SentenceTransformer('all-MiniLM-L6-v2')  # lightweight, fast, free
+model = SentenceTransformer('all-MiniLM-L6-v2')
 index = None
 job_id_map: list[int] = []
 

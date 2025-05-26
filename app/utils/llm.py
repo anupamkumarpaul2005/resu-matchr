@@ -1,4 +1,3 @@
-import fitz
 import requests
 from typing import List, Dict
 import json
@@ -65,9 +64,3 @@ def get_job_match(resume_text: str, job: Job) -> Dict:
     except:
         return {"llm_score": 0.0, "missing_skills": [], "feedback": "No feedback provided."}
 
-def extract_text_from_pdf(file_path):
-    doc = fitz.open(file_path)
-    text = ""
-    for page in doc:
-        text += page.get_text()
-    return text
