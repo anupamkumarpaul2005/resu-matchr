@@ -2,10 +2,10 @@ from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 from sqlalchemy.orm import Session
 from app.utils.llm import get_predicted_roles, get_resume_feedback, get_job_match
 from app.utils.parsing import extract_text_from_pdf
-from app.schemas import ResumeTextInput, FeedbackResponse, ResumeTextInput, MatchResponse, JobMatchFeedback
-from app.db import get_db
-from app.crud import get_job
-from app.matcher import query_index
+from app.utils.matcher import query_index
+from app.db.schemas import ResumeTextInput, FeedbackResponse, ResumeTextInput, MatchResponse, JobMatchFeedback
+from app.db.db import get_db
+from app.db.crud import get_job
 
 router = APIRouter()
 

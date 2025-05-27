@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from app.db import Base, engine, SessionLocal
-from app.crud import get_all_jobs
-from app.matcher import init_index
+from app.db.db import Base, engine, SessionLocal
+from app.db.crud import get_all_jobs
+from app.utils.matcher import init_index
 from app.routes import resume, jobs
 
 @asynccontextmanager

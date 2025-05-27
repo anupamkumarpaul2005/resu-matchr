@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Form, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone
-from app.db import get_db
-from app.models import Job
-from app.matcher import add_job_to_index
-from app.schemas import JobResponse
-from app.crud import get_job
+from app.db.db import get_db
+from app.db.models import Job
+from app.utils.matcher import add_job_to_index
+from app.db.schemas import JobResponse
+from app.db.crud import get_job
 
 router = APIRouter()
 

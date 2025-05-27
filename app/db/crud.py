@@ -1,6 +1,6 @@
 from typing import List
 from sqlalchemy.orm import Session
-from app.models import Job
+from app.db.models import Job
 from datetime import datetime, timezone
 
 def get_all_jobs(db: Session) -> List[Job]:

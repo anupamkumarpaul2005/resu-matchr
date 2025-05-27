@@ -2,8 +2,8 @@ from sentence_transformers import SentenceTransformer
 import faiss
 import numpy as np
 from typing import List
-from app.db import SessionLocal
-from app.models import Job
+from app.db.db import SessionLocal
+from app.db.models import Job
 
 model = SentenceTransformer('intfloat/e5-base')
 index = None

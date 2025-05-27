@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime
 from sqlalchemy.sql import func
 from pgvector.sqlalchemy import Vector
-from app.db import Base
+from app.db.db import Base
 
 class Job(Base):
     __tablename__ = 'jobs'

@@ -1,9 +1,9 @@
 import requests
 from typing import List, Dict
 import json
-from app.prompts import ROLE_PREDICTION_PROMPT, FEEDBACK_PROMPT, JOB_MATCH_PROMPT
-from app.models import Job
-from app.schemas import RoleConfidence, Feedback
+from app.utils.prompts import ROLE_PREDICTION_PROMPT, FEEDBACK_PROMPT, JOB_MATCH_PROMPT
+from app.db.models import Job
+from app.db.schemas import RoleConfidence, Feedback
 
 OLLAMA_URL = "http://localhost:11434/api/chat"
 MODEL_NAME = "llama3"
