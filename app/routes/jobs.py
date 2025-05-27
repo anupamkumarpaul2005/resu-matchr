@@ -51,9 +51,7 @@ def upload_job(
     db.add(new_job)
     db.commit()
     db.refresh(new_job)
-
-    combined = " ".join(filter(None, [title, description, skills, keywords, industry, experience_level]))
-    add_job_to_index(new_job.id, combined)
+    add_job_to_index(new_job)
 
     return {"message": "Job uploaded", "job_id": new_job.id}
 

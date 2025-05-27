@@ -3,19 +3,29 @@ import faiss
 import numpy as np
 from typing import List
 from app.db import SessionLocal
-from app.crud import get_job
 from app.models import Job
 
-# --- Globals ---
-model = SentenceTransformer('all-MiniLM-L6-v2')
+model = SentenceTransformer('intfloat/e5-base')
 index = None
 job_id_map: list[int] = []
 
-def init_index(jobs: List[Job], dim: int = 384):
+def format_resume_text(resume_text: str):
+    return f"query: {resume_text}"
+
+def format_job_text(job: Job):
+    text = f""" 
+    Job Title: {job.title}
+    Company: {job.company_name}
+    Description: {job.description}
+    Required Skills: {job.skills}
+    Location: {job.location}
+    Keywords: {job.keywords}
+    Industry: {job.industry}
+    Experience Level: {job.experience_level}
     """
-    Initialize a new FAISS index for Inner-Product (cosine) search
-    and reset the job_id mapping.
-    """
+    return f"passage: {text}"
+
+def init_index(jobs: List[Job], dim: int = 768):
     global index, job_id_map
     index = faiss.IndexFlatIP(dim)
     job_id_map = []
@@ -25,39 +35,29 @@ def init_index(jobs: List[Job], dim: int = 384):
                 emb = np.array(job.embedding, dtype="float32").reshape(1, -1)
                 faiss.normalize_L2(emb)
                 index.add(emb)
+                job_id_map.append(job.id)
             else:
-                text = " ".join(filter(None, [job.title, job.description, job.skills, job.keywords, job.industry, job.experience_level]))
-                emb = model.encode([text], convert_to_numpy=True)
-                faiss.normalize_L2(emb)
-                index.add(emb)
-            job_id_map.append(job.id)
+                add_job_to_index(job)
 
-def add_job_to_index(job_id: int, text: str):
-    """
-    Embed `text` and add its vector to the FAISS index,
-    recording the mapping back to `job_id`.
-    """
+def add_job_to_index(job: Job):
     global index, job_id_map
+    text = format_job_text(job)
     emb = model.encode([text], convert_to_numpy=True)
     faiss.normalize_L2(emb)
     index.add(emb)
-    job_id_map.append(job_id)
+    job_id_map.append(job.id)
 
     db = SessionLocal()
     try:
-        job = get_job(job_id, db)
-        if job:
-            job.embedding = emb[0].tolist()
-            db.commit()
+        job.embedding = emb[0].tolist()
+        db.merge(job)
+        db.commit()
     finally:
         db.close()
 
 def query_index(resume_text: str, top_k: int = 5):
-    """
-    Embed the resume, query the FAISS index, and return a list of
-    (job_id, score) for the top_k most similar job postings.
-    """
-    emb = model.encode([resume_text], convert_to_numpy=True)
+    query = format_resume_text(resume_text)
+    emb = model.encode([query], convert_to_numpy=True)
     faiss.normalize_L2(emb)
     scores, indices = index.search(emb, min(top_k, len(job_id_map)))
     results = []

@@ -22,4 +22,4 @@ class Job(Base):
     hiring_manager_email = Column(Text, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     expires_on = Column(DateTime(timezone=True), nullable=False)
-    embedding = Column(Vector(384), nullable=True)
+    embedding = Column(Vector(768), nullable=True)
