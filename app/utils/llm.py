@@ -62,5 +62,5 @@ def get_job_match(resume_text: str, job: Job) -> Dict:
         json_part = output[start:end]
         return json.loads(json_part)
     except:
-        return {"llm_score": 0.0, "missing_skills": [], "feedback": "No feedback provided."}
+        return {"llm_score": 0.0, "missing_skills": [], "feedback": "No feedback provided.", "explanation": "No explanation provided"}
 

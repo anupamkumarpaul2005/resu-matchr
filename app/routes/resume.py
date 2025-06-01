@@ -49,7 +49,8 @@ def match_jobs(payload: ResumeTextInput, db: Session = Depends(get_db)):
                     faiss_score=score,
                     llm_score=feedback.get("llm_score", 0),
                     missing_skills=feedback.get("missing_skills", []),
-                    feedback=feedback.get("feedback", "No feedback.")
+                    feedback=feedback.get("feedback", "No feedback."),
+                    explanation=feedback.get("explanation", "No  explanation provided.")
                 ))
         matched_jobs.sort(key=lambda x: x.llm_score, reverse=True)
         return MatchResponse(matches=matched_jobs[:10])

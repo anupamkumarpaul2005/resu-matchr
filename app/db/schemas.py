@@ -7,11 +7,11 @@ class ResumeTextInput(BaseModel):
 
 class JobMatchFeedback(BaseModel):
     job_id: int
-    job_title: str
     faiss_score: float
     llm_score: int
     missing_skills: List[str]
     feedback: str
+    explanation: str
 
 class MatchResponse(BaseModel):
     matches: List[JobMatchFeedback]
