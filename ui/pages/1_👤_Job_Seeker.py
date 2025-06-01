@@ -95,6 +95,7 @@ if st.session_state.actions_triggered:
                 st.write(f"**LLM Score:** {match['llm_score']}")
                 st.write(f"**Missing Skills:** {', '.join(match['missing_skills']) or 'None'}")
                 st.write(f"**Feedback:** {match['feedback']}")
+                st.write(f"**Why this job?** {match['explanation']}")
 
                 with st.expander("📋 Job Details"):
                     st.write(f"- **Location:** {job['location']}")

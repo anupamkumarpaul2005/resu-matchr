@@ -70,7 +70,7 @@ Return your response as valid JSON with this format:
 {{
   "llm_score": ...,
   "missing_skills": ["skill1", ...],
-  "feedback": "Highlight Python projects and mention deployment experience.",
-  "explanation": "Candidate has strong Python and ML fundamentals, but lacks DevOps exposure required for this role."
+  "feedback": "...",
+  "explanation": "..."
 }}
 """
