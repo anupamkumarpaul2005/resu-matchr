@@ -59,8 +59,9 @@ def query_index(resume_text: str, top_k: int = 5):
     query = format_resume_text(resume_text)
     emb = model.encode([query], convert_to_numpy=True)
     faiss.normalize_L2(emb)
-    scores, indices = index.search(emb, min(top_k, len(job_id_map)))
+    scores, indices = index.search(emb, top_k)
     results = []
     for rank, idx in enumerate(indices[0]):
-        results.append((job_id_map[idx], float(scores[0][rank])))
+        if idx!=-1:
+            results.append((job_id_map[idx], float(scores[0][rank])))
     return results

@@ -1,5 +1,11 @@
 import streamlit as st
 import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+FASTAPI_URL = os.getenv("FASTAPI_URL")
 
 st.set_page_config(page_title="ResuMatchr", layout="centered")
 
@@ -29,7 +35,7 @@ if upload_btn:
         with st.spinner("🔍 Extracting text from resume..."):
             try:
                 resp = requests.post(
-                    "http://localhost:8000/resume/upload",
+                    f"http://{FASTAPI_URL}/resume/upload",
                     files={"file": (uploaded_resume.name, uploaded_resume, "application/pdf")}
                 )
                 resp.raise_for_status()
@@ -55,7 +61,7 @@ if st.session_state.actions_triggered:
     with st.spinner("⚙️ Generating feedback..."):
         try:
             feedback_resp = requests.post(
-                "http://localhost:8000/resume/feedback",
+                f"http://{FASTAPI_URL}/resume/feedback",
                 json={"resume_text": st.session_state.resume_text}
             )
             feedback_resp.raise_for_status()
@@ -76,7 +82,7 @@ if st.session_state.actions_triggered:
     with st.spinner("🔍 Matching with jobs..."):
         try:
             match_resp = requests.post(
-                "http://localhost:8000/resume/match",
+                f"http://{FASTAPI_URL}/resume/match",
                 json={"resume_text": st.session_state.resume_text}
             )
             match_resp.raise_for_status()
@@ -87,7 +93,7 @@ if st.session_state.actions_triggered:
                 st.info("No matches found.")
             for match in matches:
                 job = requests.get(
-                    f"http://localhost:8000/job/details?job_id={match['job_id']}"
+                    f"http://{FASTAPI_URL}/job/details?job_id={match['job_id']}"
                 ).json()
 
                 st.markdown(f"### 💼 {job['title']} — {job['company_name']}")

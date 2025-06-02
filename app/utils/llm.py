@@ -4,8 +4,12 @@ import json
 from app.utils.prompts import ROLE_PREDICTION_PROMPT, FEEDBACK_PROMPT, JOB_MATCH_PROMPT
 from app.db.models import Job
 from app.db.schemas import RoleConfidence, Feedback
+import os
+from dotenv import load_dotenv
 
-OLLAMA_URL = "http://localhost:11434/api/chat"
+load_dotenv()
+
+OLLAMA_URL = f"http://{os.getenv('OLLAMA_URL')}/api/chat"
 MODEL_NAME = "llama3"
 
 def call_ollama(prompt: str) -> str:

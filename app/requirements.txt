@@ -1,0 +1,13 @@
+fastapi
+pydantic[email]
+faiss-cpu
+sqlalchemy
+python-dotenv
+pgvector
+requests
+sentence-transformers
+PyMuPDF
+llama-parse
+uvicorn
+psycopg2-binary
+python-multipart

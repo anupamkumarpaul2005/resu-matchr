@@ -1,6 +1,12 @@
 import streamlit as st
 from datetime import datetime, timedelta
 import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+FASTAPI_URL = os.getenv("FASTAPI_URL")
 
 st.set_page_config(page_title="ResuMatchr", layout="centered")
 
@@ -41,7 +47,7 @@ with st.form("job_form"):
                 "expires_on": deadline.isoformat(),
             }
             try:
-                resp = requests.post("http://localhost:8000/job/upload", data=payload)
+                resp = requests.post(f"http://{FASTAPI_URL}/job/upload", data=payload)
                 resp.raise_for_status()
                 st.success(f"Job posted! ID: {resp.json().get('job_id')}")
             except Exception as e:
