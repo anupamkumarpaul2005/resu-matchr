@@ -1,4 +1,4 @@
-from pydantic import BaseModel, HttpUrl, EmailStr
+from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
 
@@ -40,8 +40,8 @@ class JobResponse(BaseModel):
     salary_max: int
     industry: Optional[str] = None
     keywords: Optional[str] = None
-    application_link: HttpUrl
-    hiring_manager_email: EmailStr
+    application_link: str
+    hiring_manager_email: str
     expires_on: datetime
 
     class Config:

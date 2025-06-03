@@ -36,26 +36,23 @@ def match_jobs(payload: ResumeTextInput, db: Session = Depends(get_db)):
     resume_text = payload.resume_text
     if not resume_text.strip():
         raise HTTPException(400, "Resume text cannot be empty.")
-    if True:
+    try:
         matched_jobs = []
-        jobs = query_index(resume_text, top_k=20)
+        jobs = query_index(resume_text, top_k=10)
         for job_id, score in jobs:
             job = get_job(job_id, db)
             if job:
                 feedback = get_job_match(resume_text, job)
-                print(feedback)
                 matched_jobs.append(JobMatchFeedback(
                     job_id=job.id,
                     job_title=job.title,
                     faiss_score=score,
-                    llm_score=feedback.get("llm_score", 0),
+                    llm_score=feedback.get("match_score", 0),
                     missing_skills=feedback.get("missing_skills", []),
                     feedback=feedback.get("feedback", "No feedback."),
                     explanation=feedback.get("explanation", "No  explanation provided.")
                 ))
         matched_jobs.sort(key=lambda x: x.llm_score, reverse=True)
-        return MatchResponse(matches=matched_jobs[:10])
-    try:
-        pass
+        return MatchResponse(matches=matched_jobs[:5])
     except Exception as e:
         raise HTTPException(501, f"Job Matching failed: {str(e)}")

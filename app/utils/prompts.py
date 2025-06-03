@@ -1,5 +1,5 @@
 ROLE_PREDICTION_PROMPT = """
-You are a career advisor and AI assistant. Based on the following resume text, predict the **top 3-5 most relevant job roles** that this candidate is best suited for **based on their skills, education, and experience**.
+You are a career advisor and AI assistant. Based on the following resume text as markdown, predict the **top 3-5 most relevant job roles** that this candidate is best suited for **based on their skills, education, and experience**.
 
 Guidelines:
 - Only suggest realistic roles that align with the candidate's background.
@@ -7,10 +7,11 @@ Guidelines:
 - Include a confidence score between 0.0 and 1.0 (rounded to 2 decimal places).
 - Prefer internships or entry-level roles if the experience suggests so.
 
-Resume Text:
+Resume Markdown:
 {resume_text}
 
 Return a **strict JSON array** with no other text:
+Also use the same variable names.
 [
   {{
     "role": "ML Engineer Intern",
@@ -21,7 +22,7 @@ Return a **strict JSON array** with no other text:
 """
 
 FEEDBACK_PROMPT = """
-You are a resume coach and ATS optimization expert. Review the resume text and provide 3 to 5 **actionable**, **ATS-friendly** suggestions for improvement.
+You are a resume coach and ATS optimization expert. Review the resume text as markdown and provide 3 to 5 **actionable**, **ATS-friendly** suggestions for improvement.
 
 Evaluate the resume on:
 - Missing or unparseable contact details (e.g., phone number, email, LinkedIn)
@@ -32,10 +33,11 @@ Evaluate the resume on:
 - Overuse of graphics, tables, or non-text elements (if detectable)
 - Text patterns that ATS may fail to parse (e.g., dates in nonstandard formats)
 
-Resume Text:
+Resume Markdown:
 {resume_text}
 
 Return a **valid JSON array** only:
+Also use the same variable names.
 [
   {{
     "category": "Formatting | Missing Info | Skills | Structure | Bullet Points | ATS Parsing",
@@ -63,12 +65,13 @@ Job Posting:
 - Industry: {job_industry}
 - Keywords: {job_keywords}
 
-Resume:
+Resume Markdown:
 {resume_text}
 
 Return your response as valid JSON with this format:
+Also use the same variable names.
 {{
-  "llm_score": ...,
+  "match_score": ...,
   "missing_skills": ["skill1", ...],
   "feedback": "...",
   "explanation": "..."
