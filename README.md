@@ -47,7 +47,7 @@ The platform is built to be flexible—easy to run with Docker or on your local 
 
 #### 1️⃣ Clone the repository
 ```bash
-$ git clone https://github.com/yourusername/resu-matchr.git
+$ git clone https://github.com/anupamkumarpaul2005/resu-matchr.git
 $ cd resu-matchr
 ```
 #### 2️⃣ Create a .env file in the root directory (keep the URLs same):
@@ -81,7 +81,7 @@ $ docker compose up --build
 #### 1️⃣ Set up PostgreSQL database and enable pgvector.
 #### 2️⃣ Clone the repository
 ```bash
-$ git clone https://github.com/yourusername/resu-matchr.git
+$ git clone https://github.com/anupamkumarpaul2005/resu-matchr.git
 $ cd resu-matchr
 ```
 #### 3️⃣ Create a .env file in the root directory (keep the URLs same):
