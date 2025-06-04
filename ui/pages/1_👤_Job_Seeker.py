@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import re
 import os
 from dotenv import load_dotenv
 
@@ -18,6 +19,24 @@ default_states = {
 for key, value in default_states.items():
     if key not in st.session_state:
         st.session_state[key] = value
+
+
+def is_valid_resume(text: str) -> bool:
+    resume_markers = [
+        "education", "experience", "skills", "projects", "certifications",
+        "linkedin.com", "github.com"
+    ]
+    email_pattern = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
+    phone_pattern = r"(\+?\d{1,3})?\s?-?\(?\d{3,4}\)?[-\s]?\d{3}[-\s]?\d{4}"
+
+    hits = 0
+    if re.search(email_pattern, text): hits += 1
+    if re.search(phone_pattern, text): hits += 1
+    for word in resume_markers:
+        if word in text.lower():
+            hits+=1
+
+    return hits > 3
 
 st.header("📄 Upload Your Resume")
 
@@ -41,7 +60,11 @@ if upload_btn:
                 resp.raise_for_status()
                 st.session_state.resume_uploaded = True
                 st.session_state.resume_text = resp.json().get("resume_text", "")
-                st.session_state.actions_triggered = True
+                if not is_valid_resume(st.session_state.resume_text):
+                    st.error("The PDF file doesn't pass as a Resume!!")
+                    st.session_state.actions_triggered = False
+                else:
+                    st.session_state.actions_triggered = True
             except Exception as e:
                 st.error(f"❌ Extraction failed: {e}")
     else:
@@ -54,7 +77,7 @@ if not uploaded_resume:
 if st.session_state.resume_uploaded:
     st.subheader("📝 Extracted Resume Text")
     with st.expander("📄 View Resume Text"):
-        st.text(st.session_state.resume_text[:3000])  # Limit for preview
+        st.text(st.session_state.resume_text[:3000])
 
 if st.session_state.actions_triggered:
     
@@ -72,7 +95,6 @@ if st.session_state.actions_triggered:
             st.markdown("**🎯 Predicted Job Roles:**")
             for role in feedback_data["roles"]:
                 st.markdown(f"- **{role['role']}** ({role['confidence']:.0%})")
-
             st.markdown("**🔧 Improvement Suggestions:**")
             for sugg in feedback_data["feedback"]:
                 st.markdown(f"- **{sugg['category']}:** {sugg['feedback']}")

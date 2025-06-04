@@ -43,16 +43,17 @@ def match_jobs(payload: ResumeTextInput, db: Session = Depends(get_db)):
             job = get_job(job_id, db)
             if job:
                 feedback = get_job_match(resume_text, job)
-                matched_jobs.append(JobMatchFeedback(
-                    job_id=job.id,
-                    job_title=job.title,
-                    faiss_score=score,
-                    llm_score=feedback.get("match_score", 0),
-                    missing_skills=feedback.get("missing_skills", []),
-                    feedback=feedback.get("feedback", "No feedback."),
-                    explanation=feedback.get("explanation", "No  explanation provided.")
-                ))
-        matched_jobs.sort(key=lambda x: x.llm_score, reverse=True)
+                if feedback.get("match_score",0) > 0:
+                    matched_jobs.append(JobMatchFeedback(
+                        job_id=job.id,
+                        job_title=job.title,
+                        faiss_score=score,
+                        llm_score=feedback.get("match_score", 0),
+                        missing_skills=feedback.get("missing_skills", []),
+                        feedback=feedback.get("feedback", "No feedback."),
+                        explanation=feedback.get("explanation", "No  explanation provided.")
+                    ))
+        matched_jobs.sort(key=lambda x: (x.llm_score, x.faiss_score), reverse=True)
         return MatchResponse(matches=matched_jobs[:5])
     except Exception as e:
         raise HTTPException(501, f"Job Matching failed: {str(e)}")
