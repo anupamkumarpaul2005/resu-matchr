@@ -23,8 +23,8 @@ for key, value in default_states.items():
 
 def is_valid_resume(text: str) -> bool:
     resume_markers = [
-        "education", "experience", "skills", "projects", "certifications",
-        "linkedin.com", "github.com"
+        "education", "experience", "skill", "project", "certification",
+        "linkedin", "github"
     ]
     email_pattern = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
     phone_pattern = r"(\+?\d{1,3})?\s?-?\(?\d{3,4}\)?[-\s]?\d{3}[-\s]?\d{4}"
@@ -35,7 +35,6 @@ def is_valid_resume(text: str) -> bool:
     for word in resume_markers:
         if word in text.lower():
             hits+=1
-
     return hits > 3
 
 st.header("📄 Upload Your Resume")
