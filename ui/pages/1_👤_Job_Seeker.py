@@ -104,7 +104,10 @@ if st.session_state.actions_triggered:
         try:
             match_resp = requests.post(
                 f"http://{FASTAPI_URL}/resume/match",
-                json={"resume_text": st.session_state.resume_text}
+                json={
+                    "resume_text": st.session_state.resume_text,
+                    "roles": feedback_data["roles"]
+                }
             )
             match_resp.raise_for_status()
             matches = match_resp.json().get("matches", [])
@@ -118,8 +121,7 @@ if st.session_state.actions_triggered:
                 ).json()
 
                 st.markdown(f"### 💼 {job['title']} — {job['company_name']}")
-                st.write(f"**Faiss Score:** {match['faiss_score']:.4f}")
-                st.write(f"**LLM Score:** {match['llm_score']}")
+                st.write(f"**Match Score:** {match['match_score']:.2f}")
                 st.write(f"**Missing Skills:** {', '.join(match['missing_skills']) or 'None'}")
                 st.write(f"**Feedback:** {match['feedback']}")
                 st.write(f"**Why this job?** {match['explanation']}")

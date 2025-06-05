@@ -48,7 +48,7 @@ def get_resume_feedback(resume_text: str) -> List[Feedback]:
     except:
         return []
 
-def get_job_match(resume_text: str, job: Job) -> Dict:
+def get_job_match(resume_text: str, roles: str, job: Job) -> Dict:
     prompt = JOB_MATCH_PROMPT.format(
         resume_text=resume_text,
         job_title=job.title,
@@ -56,7 +56,8 @@ def get_job_match(resume_text: str, job: Job) -> Dict:
         job_skills=job.skills,
         job_experience_level=job.experience_level,
         job_industry=job.industry,
-        job_keywords=job.keywords
+        job_keywords=job.keywords,
+        roles=roles
     )
     response = call_ollama(prompt)
     try:

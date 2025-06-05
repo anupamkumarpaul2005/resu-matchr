@@ -1,5 +1,5 @@
 ROLE_PREDICTION_PROMPT = """
-You are a career advisor and AI assistant. Based on the following resume text in Markdown format, predict the **top 3-5 job roles** the candidate is realistically suited for based on their **skills, education, and experience**.
+You are a career advisor and AI assistant. Based on the following resume text extracted as Markdown from a pdf file, predict the **top 3-5 job roles** the candidate is realistically suited for based on their **skills, education, and experience**.
 
 Guidelines:
 - Only return roles the candidate is clearly prepared for.
@@ -24,7 +24,7 @@ Do not change the name of variables.
 """
 
 FEEDBACK_PROMPT = """
-You are a resume coach and ATS (Applicant Tracking System) optimization expert. Review the resume text (Markdown format) and give **4 to 5 actionable, concise suggestions** for improvement.
+You are a resume coach and ATS (Applicant Tracking System) optimization expert. Review the resume text extracted as Markdown from a pdf file and give **4 to 5 actionable, concise suggestions** for improvement.
 
 Strict Requirements:
 - Be direct. Do not praise the resume or add fluff.
@@ -55,11 +55,11 @@ Do not change the name of variables.
 """
 
 JOB_MATCH_PROMPT = """
-You are a career assistant and resume evaluator. Compare the resume against the job description and return a detailed fit analysis.
+You are a career assistant and resume evaluator. Compare the resume extracted as Markdown from a pdf file against the job description and return a detailed fit analysis.
 
 Return:
 1. A match score (0-100) based on skills, experience, and role fit.
-2. A list of critical missing skills/tools (technical or job-relevant).
+2. Decode the skills necessary for the jobs and the skills in the resume, and find the skills that are lacking in resume. List all the missing skills.
 3. Specific, no-fluff feedback to improve the resume for this job.
 4. A one-line explanation of the match score rationale.
 
@@ -68,7 +68,7 @@ Scoring Rules:
 - If resume is unrelated (e.g., marketing resume for IT job), return a match_score of -1 and note invalid match.
 - Only score highly if both experience **and** skills match.
 - Avoid scores always in the 60-85 range — be honest and strict.
-- If the resume suit a certain job role more, reward those jobs. (eg: a resume with more ML skills will have more score on ML jobs than Web dev jobs) 
+- If the job is related to the LLM predicted Roles, then reward them, else penalise them.
 
 Scoring Guidelines:
 - 90-100: Strong, nearly perfect match.
@@ -90,6 +90,9 @@ Job Posting:
 
 Resume Markdown:
 {resume_text}
+
+LLM Predicted Roles:
+{roles}
 
 Return your response as strict JSON:
 Do not change the name of variables.

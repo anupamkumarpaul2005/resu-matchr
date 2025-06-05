@@ -7,8 +7,7 @@ class ResumeTextInput(BaseModel):
 
 class JobMatchFeedback(BaseModel):
     job_id: int
-    faiss_score: float
-    llm_score: int
+    match_score: float
     missing_skills: List[str]
     feedback: str
     explanation: str
@@ -23,6 +22,10 @@ class RoleConfidence(BaseModel):
 class Feedback(BaseModel):
     category: str
     feedback: str
+
+class MatchInput(BaseModel):
+    resume_text: str
+    roles: List[RoleConfidence]
 
 class FeedbackResponse(BaseModel):
     roles: List[RoleConfidence]
